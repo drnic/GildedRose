@@ -51,4 +51,38 @@ describe GildedRose do
     end
   end
   
+  describe "Backstage passes intricacies" do
+    subject { app.items.find { |i| i.name =~ /Backstage passes/ } }
+    
+    describe "increases in quality" do
+      
+      it "increases the quality by 1 when 11 days or more" do
+        [11, 12, 20].each do |days_remaining|
+          subject.sell_in = days_remaining
+          lambda { app.update_quality }.should change(subject, :quality).by(1)
+        end
+      end
+
+      it "increases the quality by 2 when 10 days or less" do
+        [9, 10].each do |days_remaining|
+          subject.sell_in = days_remaining
+          lambda { app.update_quality }.should change(subject, :quality).by(2)
+        end
+      end
+
+      it "increases the quality by 3 when 5 days or less" do
+        [4, 5].each do |days_remaining|
+          subject.sell_in = days_remaining
+          lambda { app.update_quality }.should change(subject, :quality).by(3)
+        end
+      end
+
+      it "set the quality to 0 when after sell_in date" do
+        subject.sell_in = 0
+        app.update_quality
+        subject.quality.should == 0
+      end
+    end
+  end
+  
 end

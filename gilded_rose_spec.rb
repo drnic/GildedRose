@@ -3,18 +3,43 @@ require "rspec"
 
 app ||= GildedRose.new
 
+generic_item = app.items.first
+
 describe GildedRose do
-  [:sell_in, :quality].each do |attribute|
-    describe "lowers #{attribute.to_sym} value of" do
-      item_names = app.items.map(&:name)
-      original_values = app.items.map(&attribute)
-      app.update_quality
-      next_day_values = app.items.map(&attribute)
-      [item_names, original_values, next_day_values].transpose.each do |name, orig, next_day|
-        it "#{name} item each day" do
-          next_day.should == (orig - 1)
-        end
-      end
-    end
+  
+  
+  # Daily delta of type vs attribute
+  #
+  #         | AgedBrie | Sulfuras | BackstagePasses | Conjured | Item |
+  # sell_in |   -1     |   0      |   -1            |   -1     |  -1  |
+  # quality |   +1     |   0      |    1,2,3        |   -1     |  -1  |
+  
+  # Other tests
+  # If sell_in == 0; then quality is x2 the above
+  [:sell_in, :quality]
+  [AgedBrie, Sulfuras, BackstagePasses, Conjured, Item].each do |item_type|
   end
+  
+  describe "an item" do
+    
+    it "degrades the sell_in each day" do
+      lambda { app.update_quality }.should change(generic_item, :sell_in).by(-1)
+    end
+    
+    it "degrades the quality each day" do
+      lambda { app.update_quality }.should change(generic_item, :quality).by(-1)
+    end
+    
+    it "degrades the quality twice as fast after sell_in is 0" do
+      generic_item.sell_in = 0
+      lambda { app.update_quality }.should change(generic_item, :quality).by(-2)
+    end
+    
+    it "degrades the quality twice as fast after sell_in is 0" do
+      generic_item.quality = 0
+      lambda { app.update_quality }.should_not change(generic_item, :quality)
+    end
+    
+  end
+  
 end

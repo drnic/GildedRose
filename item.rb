@@ -10,3 +10,15 @@ class Item
 
 
 end
+
+class AgedBrie < Item
+end
+
+class Sulfuras < Item
+end
+
+class BackstagePasses < Item
+end
+
+class Conjured < Item
+end

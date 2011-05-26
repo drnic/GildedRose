@@ -34,6 +34,21 @@ describe GildedRose do
       lambda { app.update_quality }.should change(subject, :quality).by(2) # existing behavior
     end
     
+    it "never has quality above 50" do
+      subject.quality = 50
+      lambda { app.update_quality }.should_not change(subject, :quality)
+    end
+  end
+  
+  describe "Sulfuras intricacies" do
+    subject { app.items.find { |i| i.name =~ /Sulfuras/ } }
+    
+    it "never has to be sold" do
+      lambda { app.update_quality }.should_not change(subject, :sell_in)
+    end
+    it "never decreases in quality" do
+      lambda { app.update_quality }.should_not change(subject, :quality)
+    end
   end
   
 end

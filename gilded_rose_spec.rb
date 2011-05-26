@@ -41,5 +41,14 @@ describe GildedRose do
     end
     
   end
+
+  describe "Aged Brie intricacies" do
+    subject { app.items.find { |i| i.name == "Aged Brie" } }
+    
+    it "increases the quality each day" do
+      lambda { app.update_quality }.should change(subject, :quality).by(2) # existing behavior
+    end
+    
+  end
   
 end

@@ -20,7 +20,7 @@ describe GildedRose do
       lambda { app.update_quality }.should change(subject, :quality).by(-2)
     end
     
-    it "degrades the quality twice as fast after sell_in is 0" do
+    it "never drops below 0 quality" do
       subject.quality = 0
       lambda { app.update_quality }.should_not change(subject, :quality)
     end
@@ -76,13 +76,34 @@ describe GildedRose do
           lambda { app.update_quality }.should change(subject, :quality).by(3)
         end
       end
-
+    end
+    
+    describe "sets quality to 0 after expiry date" do
       it "set the quality to 0 when after sell_in date" do
         subject.sell_in = 0
         app.update_quality
         subject.quality.should == 0
       end
     end
+  end
+  
+  describe "Conjured item intricacies" do
+    subject { app.items.find { |i| i.name =~ /Conjured Mana Cake/ } }
+    
+    it "degrades the quality by 2 each day" do
+      lambda { app.update_quality }.should change(subject, :quality).by(-2)
+    end
+    
+    it "degrades the quality twice as fast after sell_in is 0" do
+      subject.sell_in = 0
+      lambda { app.update_quality }.should change(subject, :quality).by(-4)
+    end
+    
+    it "never drops below 0 quality" do
+      subject.quality = 0
+      lambda { app.update_quality }.should_not change(subject, :quality)
+    end
+    
   end
   
 end

@@ -1,9 +1,10 @@
 require './gilded_rose.rb'
 require "rspec"
 
-app ||= GildedRose.new
 
 describe GildedRose do
+  attr_reader :app
+  before { @app = GildedRose.new }
   describe "an item" do
     subject { app.items.find { |i| i.name == "+5 Dexterity Vest" } }
     
@@ -31,7 +32,7 @@ describe GildedRose do
     subject { app.items.find { |i| i.name == "Aged Brie" } }
     
     it "increases the quality each day" do
-      lambda { app.update_quality }.should change(subject, :quality).by(2) # existing behavior
+      lambda { app.update_quality }.should change(subject, :quality).by(1)
     end
     
     it "never has quality above 50" do

@@ -1,6 +1,7 @@
 require './item.rb'
 
 class GildedRose
+  attr_reader :items
 
   @items = []
 
@@ -61,6 +62,12 @@ class GildedRose
         end
       end
     end
+  end
+  
+  def to_s
+    items.map do |item|
+      "name: #{item.name}, sell_in: #{item.sell_in}, quality: #{item.quality}"
+    end.join("\n")
   end
 
 end
